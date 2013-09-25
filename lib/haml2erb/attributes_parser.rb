@@ -18,12 +18,12 @@ module Haml2Erb
     SYMBOL_KEY  = /^(?:\:(#{SYMBOL_TEXT})\s*#{ROCKET}|(#{SYMBOL_TEXT}):)\s*/
     STRING_KEY  = /^(?:'(#{STRING_TEXT})'|"(#{STRING_TEXT})")\s*#{ROCKET}\s*/
     
-    SYMBOL_VALUE = /^:(#{SYMBOL_TEXT})\s*/
-    STRING_VALUE = /^(?:"([^"]+)"|'([^']+)')\s*/
+    SYMBOL_VALUE = /^:(#{SYMBOL_TEXT})\s*,?\s*/
+    STRING_VALUE = /^(?:"([^"]*)"|'([^']*)')\s*,?\s*/
     STRING_INTERPOLATION = /^("[^\\]*)#\{/
     
     def parse!
-      rest = attributes.strip.scan(CONTENTS).flatten.first
+      rest = attributes.strip.scan(CONTENTS).flatten.compact.first
       begin
         while rest and not(rest.empty?)
           if rest =~ SYMBOL_KEY
@@ -71,7 +71,7 @@ module Haml2Erb
       else
         parse!
         if dynamic?
-          hash = attributes.scan(CONTENTS).flatten.first
+          hash = attributes.scan(CONTENTS).flatten.compact.first
           hash.strip!
           hash.gsub! /\s*,$/, ''
           " <%= tag_options({#{hash}}, false) %>"
