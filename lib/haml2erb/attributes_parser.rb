@@ -39,8 +39,10 @@ module Haml2Erb
           if rest =~ STRING_VALUE
             value = $1
             raise DynamicAttributes if rest =~ STRING_INTERPOLATION
+            rest.gsub! STRING_VALUE, ''
           elsif rest =~ SYMBOL_VALUE
             value = $1 || $2
+            rest.gsub! SYMBOL_VALUE, ''
           else
             raise DynamicAttributes
           end
@@ -75,7 +77,7 @@ module Haml2Erb
           " <%= tag_options({#{hash}}, false) %>"
         else
           pairs.map do |(key, value)|
-            "#{key}='#{value.gsub("'", '&#x27;')}'"
+            " #{key}='#{value.gsub("'", '&#x27;')}'"
           end.join('')
         end
       end
